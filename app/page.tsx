@@ -1,4 +1,7 @@
+"use client"
+
 import { Button } from "@/components/ui/button"
+import { toast } from "@/components/ui/toast"
 
 export default function Page() {
   return (
@@ -8,7 +11,18 @@ export default function Page() {
           <h1 className="font-medium">Project ready!</h1>
           <p>You may now add components and start building.</p>
           <p>We&apos;ve already added the button component for you.</p>
-          <Button className="mt-2">Button</Button>
+          <Button
+            className="mt-2"
+            onClick={() => {
+              toast.add({
+                title: "Notification",
+                description:
+                  "This is a toast notification triggered by the button click.",
+              })
+            }}
+          >
+            Show Toast
+          </Button>
         </div>
         <div className="font-mono text-xs text-muted-foreground">
           (Press <kbd>d</kbd> to toggle dark mode)
