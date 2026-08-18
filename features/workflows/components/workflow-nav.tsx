@@ -1,6 +1,8 @@
 "use client"
 
 import { useTransition } from "react"
+import Link from "next/link"
+import { usePathname } from "next/navigation"
 import { Plus, Workflow as WorkflowIcon } from "lucide-react"
 
 import {
@@ -28,6 +30,7 @@ interface WorkflowNavProps {
 }
 
 export function WorkflowNav({ workflows, onCreateWorkflow }: WorkflowNavProps) {
+  const pathname = usePathname()
   const { state } = useSidebar()
   const [isPending, startTransition] = useTransition()
 
@@ -37,13 +40,20 @@ export function WorkflowNav({ workflows, onCreateWorkflow }: WorkflowNavProps) {
     })
   }
 
-  const workflowItems = workflows.map((workflow) => (
-    <SidebarMenuItem key={workflow.id}>
-      <SidebarMenuButton>
-        <span>{workflow.name}</span>
-      </SidebarMenuButton>
-    </SidebarMenuItem>
-  ))
+  const workflowItems = workflows.map((workflow) => {
+    const isActive = pathname === `/workflows/${workflow.id}`
+
+    return (
+      <SidebarMenuItem key={workflow.id}>
+        <SidebarMenuButton
+          render={<Link href={`/workflows/${workflow.id}`} />}
+          isActive={isActive}
+        >
+          <span>{workflow.name}</span>
+        </SidebarMenuButton>
+      </SidebarMenuItem>
+    )
+  })
 
   if (state === "collapsed") {
     return (
