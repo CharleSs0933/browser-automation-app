@@ -20,7 +20,8 @@ export default function NotFound() {
         </EmptyMedia>
         <EmptyTitle>Workflow not found</EmptyTitle>
         <EmptyDescription>
-          The workflow you&apos;re looking for doesn&apos;t exist or has been deleted.
+          The workflow you&apos;re looking for doesn&apos;t exist or has been
+          deleted.
         </EmptyDescription>
       </EmptyHeader>
       <EmptyContent>

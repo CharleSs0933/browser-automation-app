@@ -1,4 +1,4 @@
-import { notFound } from "next/navigation"
+import { WorkflowShell } from "@/features/workflows/components/workflow-shell"
 
 interface PageProps {
   params: Promise<{
@@ -9,11 +9,5 @@ interface PageProps {
 export default async function Page({ params }: PageProps) {
   const { id } = await params
 
-  return (
-    <div className="flex min-h-svh items-center justify-center p-6">
-      <p className="text-sm font-medium text-muted-foreground">
-        Workflow: {id}
-      </p>
-    </div>
-  )
+  return <WorkflowShell workflowId={id} />
 }
