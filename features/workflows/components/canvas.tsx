@@ -1,6 +1,7 @@
 "use client"
 
 import { useCallback, useSyncExternalStore } from "react"
+import { useTheme } from "next-themes"
 import {
   ReactFlow,
   Controls,
@@ -10,49 +11,32 @@ import {
   ConnectionLineType,
   type Connection,
   type Edge,
-  type Node,
   ColorMode,
+  NodeTypes,
 } from "@xyflow/react"
+
+import { StepNode } from "@/features/workflows/components/step-node"
+import type { StepNodeType } from "@/features/workflows/nodes/node-registry"
+
 import "@xyflow/react/dist/style.css"
-import { useTheme } from "next-themes"
 
-const initialNodes: Node[] = [
+const nodeTypes: NodeTypes = { step: StepNode }
+
+const initialNodes: StepNodeType[] = [
   {
-    id: "1",
-    type: "input",
-    position: { x: 250, y: 25 },
-    data: { label: "1. Webhook / Schedule Trigger" },
-  },
-  {
-    id: "2",
-    position: { x: 100, y: 130 },
-    data: { label: "2. Launch Browser Session" },
-  },
-  {
-    id: "3",
-    position: { x: 400, y: 130 },
-    data: { label: "3. Fetch API Data" },
-  },
-  {
-    id: "4",
-    position: { x: 250, y: 240 },
-    data: { label: "4. Extract & Transform Data" },
-  },
-  {
-    id: "5",
-    type: "output",
-    position: { x: 250, y: 350 },
-    data: { label: "5. Send Notification / Webhook" },
+    id: "start",
+    type: "step",
+    position: { x: 0, y: 0 },
+    data: {
+      type: "start",
+      kind: "trigger",
+      title: "Start",
+      values: {},
+    },
   },
 ]
 
-const initialEdges: Edge[] = [
-  { id: "e1-2", source: "1", target: "2", animated: true },
-  { id: "e1-3", source: "1", target: "3" },
-  { id: "e2-4", source: "2", target: "4", animated: true },
-  { id: "e3-4", source: "3", target: "4" },
-  { id: "e4-5", source: "4", target: "5" },
-]
+const initialEdges: Edge[] = []
 
 const emptySubscribe = () => () => {}
 
@@ -82,6 +66,7 @@ export function Canvas() {
   return (
     <div className="size-full">
       <ReactFlow
+        nodeTypes={nodeTypes}
         nodes={nodes}
         edges={edges}
         onNodesChange={onNodesChange}
