@@ -25,7 +25,9 @@ export default function NotFound() {
         </EmptyDescription>
       </EmptyHeader>
       <EmptyContent>
-        <Button render={<Link href="/" />}>Back to workflows</Button>
+        <Button nativeButton={false} render={<Link href="/" />}>
+          Back to workflows
+        </Button>
       </EmptyContent>
     </Empty>
   )
