@@ -2,6 +2,8 @@
 
 import { useState } from "react"
 import { MoreHorizontal, Play, Trash2 } from "lucide-react"
+import { useReactFlow, useStore } from "@xyflow/react"
+import { toast } from "@/components/ui/toast"
 
 import {
   Accordion,
@@ -158,9 +160,42 @@ const definitions = Object.values(nodeRegistry)
 
 // The Toolbar tab: a button per node type that adds it to the canvas.
 function Palette() {
+  const { getNodes, addNodes, getViewport } = useReactFlow<StepNodeType>()
+
+  const width = useStore((s) => s.width)
+  const height = useStore((s) => s.height)
+
   const add = (type: NodeType) => {
-    // TODO: add the clicked node to the canvas (one trigger max).
-    void type
+    const def = nodeRegistry[type]
+    const currentNodes = getNodes()
+
+    if (
+      def.kind === "trigger" &&
+      currentNodes.some((n) => n.data.kind === "trigger")
+    ) {
+      toast.add({
+        title: "A workflow can only have one trigger.",
+        type: "error",
+        timeout: 2000,
+      })
+      return
+    }
+
+    const count = currentNodes.filter((n) => n.data.type === type).length
+    const title = `${def.label} ${count + 1}`
+
+    const { x, y, zoom } = getViewport()
+    const position = {
+      x: (width / 2 - x) / zoom,
+      y: (height / 2 - y) / zoom,
+    }
+
+    addNodes({
+      id: crypto.randomUUID(),
+      type: "step",
+      position,
+      data: { type, kind: def.kind, title, values: {} },
+    })
   }
 
   return (
