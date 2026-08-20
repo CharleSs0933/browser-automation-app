@@ -1,9 +1,10 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useTransition } from "react"
 import { MoreHorizontal, Play, Trash2 } from "lucide-react"
 import { useReactFlow, useStore } from "@xyflow/react"
 import { toast } from "@/components/ui/toast"
+import { deleteWorkflowAction } from "@/features/workflows/action"
 
 import {
   Accordion,
@@ -256,7 +257,9 @@ function Palette() {
 // ---------------------------------------------------------------------------
 
 // The "..." menu for workflow-level actions.
-function ActionsMenu() {
+function ActionsMenu({ workflowId }: { workflowId: string }) {
+  const [isPending, startTransition] = useTransition()
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger render={<Button size="icon" variant="ghost" />}>
@@ -266,8 +269,12 @@ function ActionsMenu() {
         <DropdownMenuItem
           variant="destructive"
           className="text-xs [&_svg:not([class*='size-'])]:size-3.5"
-          onSelect={() => {
-            // TODO: delete the workflow, then navigate away.
+          disabled={isPending}
+          onClick={(e) => {
+            e.preventDefault()
+            startTransition(async () => {
+              await deleteWorkflowAction(workflowId)
+            })
           }}
         >
           <Trash2 />
@@ -298,7 +305,7 @@ function RunButton() {
 // The sidebar itself — header on top, then the Toolbar / Editor tabs.
 // ---------------------------------------------------------------------------
 
-export function RightSidebar() {
+export function RightSidebar({ workflowId }: { workflowId: string }) {
   const [tab, setTab] = useState("toolbar")
 
   // TODO: read the currently selected node from React Flow.
@@ -322,7 +329,7 @@ export function RightSidebar() {
     >
       <Tabs value={tab} onValueChange={setTab} className="size-full gap-0">
         <div className="flex items-center justify-between border-b border-border p-2">
-          <ActionsMenu />
+          <ActionsMenu workflowId={workflowId} />
           <RunButton />
         </div>
         <TabsList className="m-2 w-fit bg-background">
