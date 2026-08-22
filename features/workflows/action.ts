@@ -5,13 +5,14 @@ import { redirect } from "next/navigation"
 import { auth } from "@clerk/nextjs/server"
 import { tasks, runs } from "@trigger.dev/sdk"
 
+import type { runWorkflowTask } from "@/features/workflows/tasks/run-workflow"
+
+import { liveblocks } from "@/lib/liveblocks"
 import {
   createWorkflow,
   deleteWorkflow,
   saveWorkflowGraph,
 } from "@/features/workflows/data"
-import { liveblocks } from "@/lib/liveblocks"
-import type { helloWorldTask } from "@/trigger/example"
 import type { WorkflowGraph } from "@/lib/db/schema"
 
 export async function createWorkflowAction(name: string) {
@@ -65,9 +66,16 @@ export async function runWorkflowAction({
 
   await saveWorkflowGraph({ orgId, id, graph })
 
-  return await tasks.trigger<typeof helloWorldTask>("hello-world", {
-    message: "Hello from right-sidebar",
-  })
+  return await tasks.trigger<typeof runWorkflowTask>(
+    "run-workflow",
+    {
+      workflowId: id,
+      orgId,
+    },
+    {
+      tags: [`workflow:${id}`],
+    }
+  )
 }
 
 export async function cancelWorkflowRunAction(runId: string) {
